@@ -1,28 +1,13 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Información del Usuario</title>
-    <link rel="stylesheet" href="./css/style.css">
-</head>
-<body>
-    <nav>
-        <ul>
-            <li id="userName">Invitado</li>
-            <li><a id="logoutButton" href="#">Cerrar Sesión</a></li>
-        </ul>
-    </nav>
-    <div class="container">
-        <h1>Información del Usuario</h1>
-        <div class="card">
-            <p><strong>Nombre:</strong> <span id="userNameInfo"></span></p>
-            <p><strong>Correo:</strong> <span id="userEmail"></span></p>
-            <p><strong>Fecha de Nacimiento:</strong> <span id="userDOB"></span></p>
-            <p><strong>CUIL:</strong> <span id="userCUIL"></span></p>
-            <p><strong>Permisos:</strong> <span id="userRoles"></span></p>
-        </div>
-    </div>
-</body>
-<script type="module" src="./js/auth.js"></script>
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Keycloak SSO</title>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.jsx"></script>
+  </body>
 </html>
