@@ -1,14 +1,14 @@
 import React from 'react';
+import { useCookies } from 'react-cookie';
 import { AppBar, Toolbar, Typography, Button, Box, Container } from '@mui/material';
 import { Link } from "react-router";
-import { handleLogout } from '../utils/logout';
-/* import { URL_BASE_KEYCLOAK, LOGIN_URL } from '../config.js'; */
+import useLogout from '../utils/useLogout';
 
 const Navbar = () => {
+    const [cookies] = useCookies(['session-sso']);
+
     const navStyles = {
-        backgroundColor: '#f8f9fa',
         borderRadius: '0.5rem',
-        position: 'flex',
         fullwidth: '100%',
         boxShadow: '0 4px 8px rgba(133, 57, 200, 0.79)',
         backgroundColor: 'rgba(173, 148, 194, 0.2)',
@@ -37,18 +37,22 @@ const Navbar = () => {
         justifyContent: 'center'
     };
 
+    const logout = useLogout();
+
+    const sessionCookie = cookies['session-sso'];
+    const cookie = sessionCookie ? JSON.parse(sessionCookie) : {};
+
     return (
         <Container>
-            {localStorage.getItem('userName') ? (
+            {cookie.user && cookie.user.name ? (
                 <AppBar position="static" sx={navStyles}>
                     <Toolbar>
                         <Typography variant="h6" sx={titleStyles}>
-                            {`Bienvenido ${localStorage.getItem('userName')}`}
+                            {`Bienvenido ${cookie.user.name}`}
                         </Typography>
                         <Box sx={navListStyles}>
-                            <Button sx={navLinkStyles} onClick={handleLogout}>Logout</Button>
-{/*                             <Button sx={navLinkStyles} href={`${URL_BASE_KEYCLOAK}/logout?id_token_hint=${localStorage.getItem('idToken')}&post_logout_redirect_uri=${encodeURIComponent(LOGIN_URL)}`}>Logout</Button>
- */}                        </Box>
+                            <Button sx={navLinkStyles} onClick={logout}>Logout</Button>    
+                        </Box>
                     </Toolbar>
                 </AppBar>
             ) : (

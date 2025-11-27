@@ -1,10 +1,20 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Card, CardContent, Typography, Button, Box, Divider } from '@mui/material';
+import { useCookies } from 'react-cookie';
 import { CLIENT_ID, REDIRECTION_URL, URL_BASE_KEYCLOAK } from '../config';
 import Navbar from '../components/Navbar';
 
 const Login = () => {
+    const [cookies, setCookie, removeCookie] = useCookies(['session-sso']);
+
+    useEffect(() => {
+        if (cookies['session-sso']) {
+            removeCookie('session-sso', { path: '/' });
+        }
+    }, [cookies, removeCookie]);
+
     const authUrl = `${URL_BASE_KEYCLOAK}/auth?response_type=code&client_id=${CLIENT_ID}&redirect_uri=${encodeURIComponent(REDIRECTION_URL)}&login=true&scope=openid`;
+
     return (
         <>
             <Navbar />
@@ -25,7 +35,7 @@ const Login = () => {
                 }}>
                     <CardContent>
                         <Typography variant="h4" component="h2" gutterBottom align="center">
-                            Inicia Sesión
+                            Iniciá Sesión
                         </Typography>
                         <Divider />
                         <Button

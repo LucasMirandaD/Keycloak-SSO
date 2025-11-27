@@ -1,34 +1,26 @@
 import { useState, useEffect } from 'react';
+import { useCookies } from 'react-cookie';
 import Navbar from '../components/Navbar';
 import { Typography, CircularProgress, CardContent, Card, Box } from '@mui/material';
 import { CLIENT_ID, REDIRECTION_URL, URL_BASE_KEYCLOAK, CLIENT_SECRET } from '../config.js';
 
 const Home = () => {
     const [userInfo, setUserInfo] = useState(null);
+    const [cookies, setCookie] = useCookies(['session-sso']);
 
     const renderUserInfo = () => {
         try {
-            const userInfoData = {
-                name: localStorage.getItem('userName'),
-                email: localStorage.getItem('userEmail'),
-                birthdate: localStorage.getItem('userDOB'),
-                document_number: localStorage.getItem('userCUIL'),
-            };
-            const userRoles = localStorage.getItem('userRoles');
-
-            if (!userInfoData) {
+            const sessionCookie = cookies['session-sso'];
+            if (!sessionCookie) {
+                throw new Error('No hay información de sesión');
+            }
+            const sessionData = typeof sessionCookie === 'string' ? JSON.parse(sessionCookie) : sessionCookie;
+            if (!sessionData.user || !sessionData.user.name) {
                 throw new Error('No hay información de usuario');
             }
-
-            setUserInfo({
-                name: userInfoData.name,
-                email: userInfoData.email,
-                birthdate: userInfoData.birthdate,
-                document_number: userInfoData.document_number,
-                realm_access: { roles: userRoles }
-            });
+            setUserInfo(sessionData.user);
         } catch (error) {
-            console.error('Error al obtener información del usuario:', error);
+            console.error('Error al obtener la sesión:', error);
         }
     };
 
@@ -49,7 +41,7 @@ const Home = () => {
                     let result = await fetch(`${URL_BASE_KEYCLOAK}/token`, {
                         method: 'POST',
                         headers: {
-                            'Content-Type': 'application/x-www-form-urlencoded',
+                            'Content-Type': 'application/x-www-form-urlencoded'
                         },
                         body: params.toString(),
                     });
@@ -57,26 +49,33 @@ const Home = () => {
                     result = await result.json();
                     console.log('result:', result);
 
-                    localStorage.setItem('idToken', result.id_token);
-                    localStorage.setItem('refreshToken', result.refresh_token);
-
-                    let userInfo = await fetch(`${URL_BASE_KEYCLOAK}/userinfo`, {
+                    let userInfoResponse = await fetch(`${URL_BASE_KEYCLOAK}/userinfo`, {
                         method: 'POST',
                         headers: {
                             'Authorization': `Bearer ${result.access_token}`,
                             'Content-Type': 'application/json'
                         },
                     });
-                    userInfo = await userInfo.json();
+                    const userInfoData = await userInfoResponse.json();
 
-                    localStorage.setItem('userName', userInfo.name);
-                    localStorage.setItem('userEmail', userInfo.email);
-                    localStorage.setItem('userDOB', userInfo.birthdate.toString());
-                    localStorage.setItem('userCUIL', userInfo.document_number);
-                    localStorage.setItem('userRoles', userInfo.realm_access.roles.join(', '));
+                    // Construir la sesión con toda la información relevante
+                    const sessionData = {
+                        idToken: result.id_token,
+                        refreshToken: result.refresh_token,
+                        user: {
+                            name: userInfoData.name,
+                            email: userInfoData.email,
+                            birthdate: userInfoData.birthdate.toString(),
+                            document_number: userInfoData.document_number,
+                            roles: userInfoData.realm_access.roles,
+                        }
+                    };
 
-                    setUserInfo(userInfo);
-                    console.log('User information:', userInfo);
+                    // Almacenar toda la sesión en una única cookie
+                    setCookie('session-sso', JSON.stringify(sessionData));
+
+                    setUserInfo(sessionData.user);
+                    console.log('User information:', userInfoData);
 
                 } catch (error) {
                     console.error('Error fetching data:', error);
@@ -101,8 +100,7 @@ const Home = () => {
                             <Typography variant="body1"><strong>Email:</strong> {userInfo.email}</Typography>
                             <Typography variant="body1"><strong>Date of Birth:</strong> {userInfo.birthdate}</Typography>
                             <Typography variant="body1"><strong>CUIL:</strong> {userInfo.document_number}</Typography>
-                            <Typography variant="body1"><strong>Roles:</strong> {userInfo.realm_access.roles}</Typography>
-                            <Typography variant="body1"><strong>Token:</strong> {localStorage.getItem('idToken').slice(0,30)}</Typography>
+                            <Typography variant="body1"><strong>Roles:</strong> {userInfo.roles.join(', ')}</Typography>
                         </CardContent>
                     </Card>
                 ) : (
