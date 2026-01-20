@@ -6,6 +6,17 @@ Este proyecto es una demostración de cómo integrar Keycloak para autenticació
 
 - Un servidor de Keycloak configurado.
 - Un `client_id`, `redirect_uri` y tu `client_secret`.
+- Node.js y npm instalados.
+
+### Extensiones Recomendadas
+
+Al abrir el proyecto, VS Code te sugerirá instalar las siguientes extensiones:
+- **Prettier**: Formateador de código
+- **ESLint**: Linter para JavaScript
+- **Live Server**: Servidor de desarrollo en vivo
+- **Firefox Debugger**: Depuración con Firefox
+- **Chrome Debugger**: Depuración con Chrome
+- **Path Intellisense**: Autocompletado de rutas
 
 ## Configuración
 

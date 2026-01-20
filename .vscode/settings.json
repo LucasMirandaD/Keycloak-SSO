@@ -1,3 +1,27 @@
 {
-    "liveServer.settings.port": 3000
+    "liveServer.settings.port": 3000,
+    "workbench.colorCustomizations": {
+        "activityBar.background": "#4F2008",
+        "titleBar.activeBackground": "#6E2C0B",
+        "titleBar.activeForeground": "#FEF9F7"
+    },
+    "editor.formatOnSave": true,
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.codeActionsOnSave": {
+        "source.fixAll.eslint": "explicit"
+    },
+    "files.associations": {
+        "*.html": "html",
+        "*.js": "javascript"
+    },
+    "liveServer.settings.host": "127.0.0.1",
+    "liveServer.settings.CustomBrowser": "chrome",
+    "javascript.suggest.autoImports": true,
+    "javascript.updateImportsOnFileMove.enabled": "always",
+    "files.exclude": {
+        "**/node_modules": true
+    },
+    "search.exclude": {
+        "**/node_modules": true
+    }
 }

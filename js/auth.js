@@ -30,7 +30,7 @@ export const keycloak = async () => {
 
             // Almacena el ID Token para usarlo en el cierre de sesión
             localStorage.setItem('idToken', result.id_token);
-            localStorage.setItem('refreshToken',result.refresh_token);
+            localStorage.setItem('refreshToken', result.refresh_token);
 
             // Obtiene la información del usuario
             let userInfo = await fetch(`${URL_BASE_KEYCLOAK}/userinfo`, {
